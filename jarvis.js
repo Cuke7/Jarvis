@@ -27,7 +27,7 @@ const encoding = "AUDIO_ENCODING_LINEAR_16";
 const sampleRateHertz = 16000;
 
 // The BCP-47 language code to use, e.g. 'en-US'
-const languageCode = "en-US";
+const languageCode = "fr";
 const sessionPath = sessionClient.projectAgentSessionPath("jarvis-fbiu", 1234);
 
 process.env.GOOGLE_APPLICATION_CREDENTIALS = "C:/Users/loucassany-adm/Desktop/Perso/Jarvis/private/jarvis-fbiu-c9f15797e41f.json";
@@ -44,7 +44,7 @@ const initialStreamRequest = {
     },
     outputAudioConfig: {
         audioEncoding: "OUTPUT_AUDIO_ENCODING_LINEAR_16",
-        sampleRateHertz: 24000,
+        sampleRateHertz: 20000,
     },
 };
 

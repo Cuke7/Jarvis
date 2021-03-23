@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/@mdi/font@4.x/css/materialdesignicons.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
+    <link rel="icon" type="image/png" href="icon.png" />
+    <meta name="theme-color" content="#3367D6" />
+    <title>Jarvis</title>
+</head>
+
+<body>
+    <div id="app">
+        <v-app>
+            <!-- TOP APP BAR -->
+            <v-app-bar app color="deep-purple accent-4" dense dark>
+                <v-toolbar-title>Jarvis 🧠</v-toolbar-title>
+            </v-app-bar>
+
+            <!-- MAIN CONTENT -->
+            <v-main>
+                <!-- Chat -->
+                <v-row align="center">
+                    <v-col cols=6>
+                        <v-card class="ma-6 pa-6">
+                            <template v-for="message in messages">
+                                <v-row v-if="message.sender == 0" class="my-2" justify="start">
+                                    <v-chip color="primary">
+                                        {{message.text}}
+                                    </v-chip>
+                                </v-row>
+                                <v-row v-else class="my-2" justify="end">
+                                    <v-chip color="secondary">
+                                        {{message.text}}
+                                    </v-chip>
+                                </v-row>
+                            </template>
+                            <v-row align="center" class="mx-3">
+                                <v-text-field label="Ask Jarvis" v-model="input" @keydown.enter="ask_jarvis(input)">
+                                </v-text-field>
+                                <v-btn v-if= "input.length > 0" fab color="primary" width=50 height=50 @click="ask_jarvis(input)" class="ml-6">
+                                    <v-icon>mdi-send</v-icon>
+                                </v-btn>
+                                <v-btn v-else disabled fab color="primary" width=50 height=50 @click="ask_jarvis(input)" class="ml-6">
+                                    <v-icon>mdi-send</v-icon>
+                                </v-btn>
+                               
+                            </v-row>
+                        </v-card>
+                    </v-col>
+                    <v-col cols=6>
+                        <audio hidden controls ref="jarvis_audio" @ended="reset_src()" autoplay>
+                        </audio>
+                    </v-col>
+                </v-row>
+
+            </v-main>
+        </v-app>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
+    <script src="app.js"></script>
+
+</body>
+
+</html>

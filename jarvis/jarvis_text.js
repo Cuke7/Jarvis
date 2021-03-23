@@ -8,19 +8,16 @@ const sessionClient = new dialogflow.SessionsClient();
 const Speaker = require("speaker");
 const { PassThrough } = require("stream");
 
+// Prompt code
 const prompt = require("prompt");
 var colors = require("colors/safe");
 prompt.message = colors.green("");
 prompt.delimiter = colors.green(">>");
 
-/**
- * TODO(developer): Uncomment the following lines before running the sample.
- */
 const projectId = "jarvis-fbiu";
 const sessionId = "1234";
-// const query = `phrase(s) to pass to detect, e.g. I'd like to reserve a room for six people`;
 const languageCode = "fr";
-// const outputFile = `path for audio output file, e.g. ./resources/myOutput.wav`;
+
 
 process.env.GOOGLE_APPLICATION_CREDENTIALS = "C:/Users/loucassany-adm/Desktop/Perso/Jarvis/private/jarvis-fbiu-c9f15797e41f.json";
 

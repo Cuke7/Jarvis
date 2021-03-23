@@ -30,33 +30,40 @@
                 <!-- Chat -->
                 <v-row align="center">
                     <v-col cols=5>
-                        <v-card class="ma-6 pa-6" style="height: 500px;">
-
-                            <template v-for="message in messages">
-                                <v-row v-if="message.sender == 0" class="my-3" justify="start">
-                                    <v-chip color="primary">
-                                        {{message.text}}
-                                    </v-chip>
+                        <v-card class="ma-6" style="height: 500px;">
+                            <div ref="messages" style="overflow: scroll;" :style="{ height: messageBoxHeigh + 'px' }"
+                                class="pa-6">
+                                <template v-for="message in messages">
+                                    <v-row v-if="message.sender == 0" class="my-3" justify="start">
+                                        <v-chip color="primary">
+                                            {{message.text}}
+                                        </v-chip>
+                                    </v-row>
+                                    <v-row v-else class="my-3" justify="end">
+                                        <v-chip color="secondary">
+                                            {{message.text}}
+                                        </v-chip>
+                                    </v-row>
+                                </template>
+                            </div>
+                            <div ref="text_input">
+                                <v-divider></v-divider>
+                                <v-row align="center" class="ma-3 mx-12">
+                                    <v-text-field label="Ask Jarvis" v-model="input" @keydown.enter="ask_jarvis(input)">
+                                    </v-text-field>
+                                    <v-btn v-if="input.length > 0" fab color="primary" width=40 height=40
+                                        @click="ask_jarvis(input)" class="ml-6">
+                                        <v-icon>mdi-send</v-icon>
+                                    </v-btn>
+                                    <v-btn v-else disabled fab color="primary" width=40 height=40
+                                        @click="ask_jarvis(input)" class="ml-6">
+                                        <v-icon>mdi-send</v-icon>
+                                    </v-btn>
+                                    <v-btn fab color="primary" width=40 height=40 class="ml-6">
+                                        <v-icon>mdi-microphone</v-icon>
+                                    </v-btn>
                                 </v-row>
-                                <v-row v-else class="my-3" justify="end">
-                                    <v-chip color="secondary">
-                                        {{message.text}}
-                                    </v-chip>
-                                </v-row>
-                            </template>
-
-                            <v-row align="center" class="mx-3">
-                                <v-text-field label="Ask Jarvis" v-model="input" @keydown.enter="ask_jarvis(input)">
-                                </v-text-field>
-                                <v-btn v-if="input.length > 0" fab color="primary" width=50 height=50
-                                    @click="ask_jarvis(input)" class="ml-6">
-                                    <v-icon>mdi-send</v-icon>
-                                </v-btn>
-                                <v-btn v-else disabled fab color="primary" width=50 height=50 @click="ask_jarvis(input)"
-                                    class="ml-6">
-                                    <v-icon>mdi-send</v-icon>
-                                </v-btn>
-                            </v-row>
+                            </div>
                             <audio hidden controls ref="jarvis_audio" @ended="reset_src()" autoplay>
                             </audio>
                         </v-card>
@@ -74,6 +81,15 @@
     <style>
         #map {
             height: 500px;
+        }
+
+        ::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        /* Handle */
+        ::-webkit-scrollbar-thumb {
+            background: #888;
         }
     </style>
     <!-- Leaflet library -->

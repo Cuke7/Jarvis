@@ -2,28 +2,30 @@
 let vue = new Vue({
     el: "#app",
     vuetify: new Vuetify(),
+    updated: function () {
+        this.$nextTick(function () {
+            this.setHeight();
+        });
+    },
+    mounted: function () {
+        this.$nextTick(function () {
+            this.setHeight();
+        });
+    },
     data: () => ({
         input: "Hello",
-        messages: [
-            { sender: 0, text: "Hello Jarvis" },
-            { sender: 1, text: "Bonjour Monsieur" },
-            { sender: 1, text: "Que-puis je pour vous ?" },
-            { sender: 0, text: "Hello Jarvis" },
-            { sender: 1, text: "Bonjour Monsieur" },
-            { sender: 1, text: "Que-puis je pour vous ?" },
-            { sender: 0, text: "Hello Jarvis" },
-            { sender: 0, text: "Hello Jarvis" },
-        ],
+        messages: [],
         map_init: { lat: 44.816976, lon: -0.58569 },
         map: null,
+        messageBoxHeigh: 300,
     }),
     methods: {
         ask_jarvis: function (query) {
             this.messages.push({ sender: 0, text: query });
-            this.messages.shift();
+
             get_jarvis(query).then((data) => {
                 this.messages.push({ sender: 1, text: data.text });
-                this.messages.shift();
+
                 this.$refs.jarvis_audio.src = "/get_last_response_audio";
             });
             this.input = "";
@@ -44,6 +46,10 @@ let vue = new Vue({
             }).addTo(this.map);
             var marker = L.marker([this.map_init.lat, this.map_init.lon]).addTo(this.map);
             marker.bindPopup("➡️ Bordeaux : 3 min<br>➡️ Pessac 4 min ").openPopup();
+        },
+        setHeight: function () {
+            this.messageBoxHeigh = 500 - vue.$refs.text_input.clientHeight;
+            this.$refs.messages.scrollTop = 10000;
         },
     },
 });

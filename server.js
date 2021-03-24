@@ -2,11 +2,16 @@
 
 const express = require("express");
 const app = express();
+const rp = require('request-promise');
+const request = require("request");
+const ytdl = require("ytdl-core");
+const sendSeekable = require("send-seekable");
 
 app.listen(process.env.PORT || 8000, () => {
     console.log("Listening to requests on" + process.env.PORT);
 });
 
+app.use(sendSeekable);
 app.use(express.static("public"));
 
 const allowedOrigins = ["http://127.0.0.1"];
@@ -62,7 +67,7 @@ async function get_jarvis(req, resp) {
     });
 }
 
-const { Readable } = require('stream');
+const { Readable } = require("stream");
 app.get("/get_last_response_audio", get_audio);
 
 async function get_audio(req, resp) {
@@ -76,4 +81,84 @@ async function get_audio(req, resp) {
             this.push(null);
         },
     }).pipe(resp);
+}
+
+// ---------------------------MUSIC STUFF----------------------------
+//
+app.get("/get_playlist", return_playlist);
+app.get("/get_playlist", return_playlist);
+
+function return_playlist(req, resp) {
+    (async () => {
+        let results = await get_playlist(req);
+        resp.json(results);
+    })().catch((err) => resp.json(err));
+}
+
+async function get_playlist(req) {
+    if (decodeURI(req.query.url.length) > 0) {
+        console.log(decodeURI(req.query.url))
+
+        let body = await rp(decodeURI(req.query.url));
+        
+        let start = body.indexOf("var ytInitialData = ");
+        let end = body.indexOf("</script>", start);
+        let obj = body.substring(start + 20, end - 1);
+
+        let ytdata = JSON.parse(obj);
+
+        let data = ytdata.contents.twoColumnBrowseResultsRenderer.tabs[0].tabRenderer.content.sectionListRenderer.contents[0].itemSectionRenderer.contents[0].playlistVideoListRenderer.contents;
+
+        let playlist = [];
+
+        for (const item of data) {
+            playlist.push({
+                title: item.playlistVideoRenderer.title.runs[0].text,
+                thumbnail: item.playlistVideoRenderer.thumbnail.thumbnails[0].url,
+                id: item.playlistVideoRenderer.videoId,
+                duration: item.playlistVideoRenderer.lengthText.simpleText,
+                artist: item.playlistVideoRenderer.shortBylineText.runs[0].text,
+            });
+        }
+
+        return { name: ytdata.metadata.playlistMetadataRenderer.title, playlist: playlist };
+    } else {
+        return null;
+    }
+}
+
+app.get("/get_link", get_mp3_link);
+app.get("/get_link", get_mp3_link);
+
+const DEFAULT_HEADERS = {
+    "User-Agent": getFirefoxUserAgent(),
+    "Accept-Language": "en-US,en;q=0.5",
+};
+
+// keep user agent up to date with some magic
+function getFirefoxUserAgent() {
+    let date = new Date();
+    let version = (date.getFullYear() - 2018) * 4 + Math.floor(date.getMonth() / 4) + 58 + ".0";
+    return `Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:${version} Gecko/20100101 Firefox/${version}`;
+}
+
+async function get_mp3_link(req, resp) {
+    let id = decodeURI(req.query.id);
+    let url = "https://www.youtube.com/watch?v=" + id;
+
+    let info = await ytdl.getInfo(id);
+    let format = ytdl.chooseFormat(info.formats, { quality: "highestaudio" });
+    let type = "audio/mpeg";
+    let size = format.contentLength;
+
+    let stream = ytdl(url, {
+        format: format,
+        requestOptions: {
+            headers: DEFAULT_HEADERS,
+        },
+    });
+    resp.sendSeekable(stream, {
+        type: type,
+        length: size,
+    });
 }

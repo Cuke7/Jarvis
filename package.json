@@ -26,12 +26,16 @@
         "prompts": "^2.4.0",
         "pump": "^3.0.0",
         "readable-stream": "^3.6.0",
+        "request": "^2.88.2",
+        "request-promise": "^4.2.6",
+        "send-seekable": "^1.0.4",
         "sox": "^0.1.0",
         "speaker": "^0.5.3",
         "stream": "0.0.2",
         "structjson": "^1.0.1",
         "util": "^0.12.3",
-        "uuid": "^8.3.2"
+        "uuid": "^8.3.2",
+        "ytdl-core": "^4.5.0"
     },
     "devDependencies": {
         "ngrok": "^3.4.1",

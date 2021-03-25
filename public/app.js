@@ -80,10 +80,10 @@ let vue = new Vue({
             this.$refs.jarvis_audio.src = "";
         },
         setHeight: function () {
-            this.chatHeight = 500 - vue.$refs.text_input.clientHeight;
+            this.chatHeight = 700 - vue.$refs.text_input.clientHeight;
             this.$refs.messages.scrollTop = 10000;
 
-            this.musicHeight = 500 - vue.$refs.player.clientHeight;
+            this.musicHeight = 700 - vue.$refs.player.clientHeight;
         },
         // Map stuff
         init_map: function () {

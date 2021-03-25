@@ -32,7 +32,7 @@
                     <!-- Chat -->
 
                     <v-col cols=4>
-                        <v-card class="ml-6 rounded-t-xl" style="height: 500px;">
+                        <v-card class="ml-6 rounded-t-xl" style="height: 700;">
                             <div ref="messages" style="overflow: scroll;" :style="{ height: chatHeight + 'px' }"
                                 class="pa-6">
                                 <template v-for="message in messages">
@@ -113,6 +113,7 @@
                                     </v-card>
                                 </template>
                             </div>
+                            <v-divider></v-divider>
                             <div ref="player">
                                 <v-row align="center" class="my-0 pa-0">
                                     <v-col class="pa-0 mx-3">
@@ -180,15 +181,18 @@
                                 </audio>
                             </div>
                         </v-card>
-
                     </v-col>
+                </v-row>
+                <v-row class = "ml-6 mt-0">
+                    <iframe id="widget_autocomplete_preview" width="" height="" frameborder="0"
+                        src="https://meteofrance.com/widget/prevision/332020"> </iframe>
                 </v-row>
             </v-main>
         </v-app>
     </div>
     <style>
         #map {
-            height: 500px;
+            height: 700px;
         }
 
         ::-webkit-scrollbar {

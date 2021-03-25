@@ -49,7 +49,7 @@ let vue = new Vue({
         liste_lecture: { list: [], name: "", loading: false },
     }),
     watch: {
-        // Custom player stuff
+        // Music stuff
         time(time) {
             if (Math.abs(time - this.$refs.audio.currentTime) > 0.5) {
                 this.$refs.audio.currentTime = time;
@@ -71,13 +71,16 @@ let vue = new Vue({
             get_jarvis(query).then((data) => {
                 this.messages.push({ sender: 1, text: data.text });
 
-                this.$refs.jarvis_audio.src = "/get_last_response_audio";
+                this.$refs.jarvis_audio.src = "/jarvisAPI/get_last_response_audio";
             });
             this.input = "";
         },
-        // Chat stuff
         reset_src: function () {
             this.$refs.jarvis_audio.src = "";
+        },
+        setHeight: function () {
+            this.messageBoxHeigh = 500 - vue.$refs.text_input.clientHeight;
+            this.$refs.messages.scrollTop = 10000;
         },
         // Map stuff
         init_map: function () {
@@ -93,11 +96,6 @@ let vue = new Vue({
             }).addTo(this.map);
             var marker = L.marker([this.map_init.lat, this.map_init.lon]).addTo(this.map);
             marker.bindPopup("➡️ Bordeaux : 3 min<br>➡️ Pessac 4 min ").openPopup();
-        },
-        // Chat stuff
-        setHeight: function () {
-            this.messageBoxHeigh = 500 - vue.$refs.text_input.clientHeight;
-            this.$refs.messages.scrollTop = 10000;
         },
         // Music stuff
         change_shuffle() {
@@ -181,11 +179,7 @@ let vue = new Vue({
                         this.load_song(this.liste_lecture.list[0]);
                     }
                 } else {
-                    console.log("Implement snackbar please");
-                    /*this.error_snackbar.text = "No playlist found, make sure the playlist is not set on private and does not contain private videos.";
-                    this.error_snackbar.timeout = 6000;
-                    this.error_snackbar.val = true;
-                    this.liste_lecture.loading = false;*/
+                    console.log("Loading playlist failed.");
                 }
             });
         },
@@ -199,33 +193,22 @@ let vue = new Vue({
             // Only the clicked song is showing the loading button
             this.current_loading_song = song;
             this.current_loading_song.loading = true;
-
-            console.log("Showing loading");
-
             this.$forceUpdate();
-
             this.song_index = song.index;
-
-            this.$refs.audio.src = "/get_link?id=" + encodeURI(song.id);
-
-            // Then, player_is_ready should fire next
+            this.$refs.audio.src = "/musicAPI/get_audio?id=" + encodeURI(song.id);
         },
         player_is_ready() {
             this.play();
-
             this.current_loaded_song = this.current_loading_song;
             this.current_loaded_song.loaded = true;
-
             this.current_loaded_song.loading = false;
-
-            //document.getElementById('custom_player').style.backgroundImage = "url(" + this.current_loaded_song.thumbnail + ")";
         },
     },
 });
 
 // Music stuff
 function get_playlist(url) {
-    return fetch("/get_playlist?url=" + encodeURI(url))
+    return fetch("/musicAPI/get_playlist?url=" + encodeURI(url))
         .then((response) => {
             return response.json();
         })
@@ -239,7 +222,7 @@ vue.init_map();
 
 // Chat stuff
 function get_jarvis(query) {
-    return fetch("/get_jarvis?" + "query=" + encodeURI(query))
+    return fetch("/jarvisAPI/get_jarvis?" + "query=" + encodeURI(query))
         .then((response) => {
             return response.json();
         })

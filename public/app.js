@@ -35,7 +35,8 @@ let vue = new Vue({
         // Map stuff
         map_init: { lat: 44.816976, lon: -0.58569 },
         map: null,
-        messageBoxHeigh: 300,
+        chatHeight: 300,
+        musicHeight: 300,
         // Music stuff
         playlists: [{ name: "Guitars", url: "https://www.youtube.com/playlist?list=PLY80CRqvcxEXtmbMSJDqIK4uk_FB3j5I8" }],
         time: 0,
@@ -79,8 +80,10 @@ let vue = new Vue({
             this.$refs.jarvis_audio.src = "";
         },
         setHeight: function () {
-            this.messageBoxHeigh = 500 - vue.$refs.text_input.clientHeight;
+            this.chatHeight = 500 - vue.$refs.text_input.clientHeight;
             this.$refs.messages.scrollTop = 10000;
+
+            this.musicHeight = 500 - vue.$refs.player.clientHeight;
         },
         // Map stuff
         init_map: function () {

@@ -32,8 +32,8 @@
                     <!-- Chat -->
 
                     <v-col cols=4>
-                        <v-card class="ml-6" style="height: 500px;">
-                            <div ref="messages" style="overflow: scroll;" :style="{ height: messageBoxHeigh + 'px' }"
+                        <v-card class="ml-6 rounded-t-xl" style="height: 500px;">
+                            <div ref="messages" style="overflow: scroll;" :style="{ height: chatHeight + 'px' }"
                                 class="pa-6">
                                 <template v-for="message in messages">
                                     <v-row v-if="message.sender == 0" class="my-3" justify="start">
@@ -74,79 +74,111 @@
                     <!-- Maps -->
 
                     <v-col cols=4>
-                        <v-card class="ma-3">
+                        <v-card class="ma-3 rounded-t-xl">
                             <div id="map"></div>
                         </v-card>
                     </v-col>
 
                     <!-- Music -->
                     <v-col cols=4>
+                        <v-card class="mr-6 rounded-t-xl" id="custom_player" :elevation=12 bottom>
+                            <div ref="music" style="overflow: scroll;" :style="{ height: musicHeight + 'px' }"
+                                class="pa-6">
+                                <template v-for="song in liste_lecture.list">
+                                    <v-card class="ma-4 " color="grey">
+                                        <div class="d-flex flex-no-wrap justify-space-between pa-1">
+                                            <div class="my-auto ml-2">
+                                                <div class="subtitle-2">{{song.title}}</div>
+                                                <v-card-subtitle class="ma-0 pa-0">{{song.artist}} ({{song.duration}})
+                                                </v-card-subtitle>
+                                                <v-row class="my-2" align="center">
+                                                    <div class="mx-2">
+                                                        <v-btn v-if="song.loaded" fab :disabled="true" color="secondary"
+                                                            width=50 height=50>
+                                                            <v-icon>mdi-music-note</v-icon>
+                                                        </v-btn>
+                                                        <v-btn v-else :loading="song.loading" :disabled="song.loading"
+                                                            fab color="secondary"
+                                                            @click="current_loading_song = song; load_song(song);"
+                                                            width=50 height=50>
+                                                            <v-icon>mdi-play</v-icon>
+                                                        </v-btn>
+                                                    </div>
+                                                </v-row>
+                                            </div>
+                                            <v-avatar class="my-auto mx-2" size="100">
+                                                <v-img :src="song.thumbnail"></v-img>
+                                            </v-avatar>
+                                        </div>
+                                    </v-card>
+                                </template>
+                            </div>
+                            <div ref="player">
+                                <v-row align="center" class="my-0 pa-0">
+                                    <v-col class="pa-0 mx-3">
+                                        <v-skeleton-loader v-if="current_loading_song.loading" type="text">
+                                        </v-skeleton-loader>
+                                        <div v-else>
+                                            <div class="subtitle-2 text-center" v-if="current_loaded_song">
+                                                {{current_loaded_song.title}}
+                                            </div>
+                                            <div class="subtitle-2 text-center" v-else>
+                                                No song loaded
+                                            </div>
+                                        </div>
+                                    </v-col>
+                                    <v-col cols="auto" class="mr-6">
+                                        <v-fab-transition>
+                                            <v-btn color="primary" fab width=50 height=50 @click="change_shuffle"
+                                                :key="shuffle.state">
+                                                <v-icon>{{shuffle.icon}}</v-icon>
+                                            </v-btn>
+                                        </v-fab-transition>
+                                    </v-col>
+                                </v-row>
 
-                        <v-card class=" pa-3 mr-6 rounded-t-xl" id="custom_player" :elevation=12 bottom>
-                            <v-row align="center" class="my-0">
-                                <v-col class="pa-0 mx-3">
-                                    <v-skeleton-loader v-if="current_loading_song.loading" type="text">
-                                    </v-skeleton-loader>
-                                    <div v-else>
-                                        <div class="subtitle-2 text-center" v-if="current_loaded_song">
-                                            {{current_loaded_song.title}}
-                                        </div>
-                                        <div class="subtitle-2 text-center" v-else>
-                                            No song loaded
-                                        </div>
-                                    </div>
-                                </v-col>
-                                <v-col cols="auto" class="ma-3 mx-2">
-                                    <v-fab-transition>
-                                        <v-btn color="primary" fab width=50 height=50 @click="change_shuffle"
-                                            :key="shuffle.state">
-                                            <v-icon>{{shuffle.icon}}</v-icon>
+                                <v-row align="center" class="mx-8">
+                                    <v-col class="pa-0">
+                                        <v-slider hide-details ref="toto" class="my-0 pa-0" v-model="time" thumb-label
+                                            step="0.001" color="secondary" track-color="primary"
+                                            track-fill-color="secondary" :min="0" :max="duration" :thumb-size="40">
+                                            <template v-slot:thumb-label="{ value }">
+                                                {{new Date(value * 1000).toISOString().substr(14, 5)}}
+                                            </template>
+                                        </v-slider>
+                                    </v-col>
+                                    <v-col class="text-caption" cols="auto">
+                                        {{new Date(time * 1000).toISOString().substr(14, 5)}} / {{new
+                                        Date(duration *
+                                        1000).toISOString().substr(14, 5)}}
+                                    </v-col>
+                                </v-row>
+
+                                <v-row align="center" justify="center" class="my-0">
+                                    <v-col cols="auto" class="mx-auto ml-10">
+                                        <v-btn color="primary" fab @click="change_song(false)">
+                                            <v-icon>mdi-skip-previous</v-icon>
                                         </v-btn>
-                                    </v-fab-transition>
-                                </v-col>
-                            </v-row>
+                                    </v-col>
+                                    <v-col cols="auto" class="mx-auto">
+                                        <v-btn color="primary" fab @click="isPlaying = !isPlaying">
+                                            <v-icon v-if="isPlaying">mdi-pause</v-icon>
+                                            <v-icon v-else>mdi-play</v-icon>
+                                        </v-btn>
+                                    </v-col>
+                                    <v-col cols="auto" class="mx-auto mr-10">
+                                        <v-btn color="primary" fab @click="change_song(true)">
+                                            <v-icon>mdi-skip-next</v-icon>
+                                        </v-btn>
+                                    </v-col>
+                                </v-row>
 
-                            <v-row align="center" class="mx-8">
-                                <v-col class="pa-0">
-                                    <v-slider hide-details ref="toto" class="my-0 pa-0" v-model="time" thumb-label
-                                        step="0.001" color="secondary" track-color="primary"
-                                        track-fill-color="secondary" :min="0" :max="duration" :thumb-size="40">
-                                        <template v-slot:thumb-label="{ value }">
-                                            {{new Date(value * 1000).toISOString().substr(14, 5)}}
-                                        </template>
-                                    </v-slider>
-                                </v-col>
-                                <v-col class="text-caption" cols="auto">
-                                    {{new Date(time * 1000).toISOString().substr(14, 5)}} / {{new
-                                    Date(duration *
-                                    1000).toISOString().substr(14, 5)}}
-                                </v-col>
-                            </v-row>
-
-                            <v-row align="center" justify="center" class="my-0">
-                                <v-col cols="auto" class="mx-auto ml-10">
-                                    <v-btn color="primary" fab @click="change_song(false)">
-                                        <v-icon>mdi-skip-previous</v-icon>
-                                    </v-btn>
-                                </v-col>
-                                <v-col cols="auto" class="mx-auto">
-                                    <v-btn color="primary" fab @click="isPlaying = !isPlaying">
-                                        <v-icon v-if="isPlaying">mdi-pause</v-icon>
-                                        <v-icon v-else>mdi-play</v-icon>
-                                    </v-btn>
-                                </v-col>
-                                <v-col cols="auto" class="mx-auto mr-10">
-                                    <v-btn color="primary" fab @click="change_song(true)">
-                                        <v-icon>mdi-skip-next</v-icon>
-                                    </v-btn>
-                                </v-col>
-                            </v-row>
-
-                            <audio hidden @timeupdate="time = $event.target.currentTime"
-                                @durationchange="duration = $event.target.duration" ref="audio" controls preload="auto"
-                                @canplay="player_is_ready()" @ended="change_song(true)" autoplay>
-                                <source src="">
-                            </audio>
+                                <audio hidden @timeupdate="time = $event.target.currentTime"
+                                    @durationchange="duration = $event.target.duration" ref="audio" controls
+                                    preload="auto" @canplay="player_is_ready()" @ended="change_song(true)" autoplay>
+                                    <source src="">
+                                </audio>
+                            </div>
                         </v-card>
 
                     </v-col>

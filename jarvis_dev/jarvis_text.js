@@ -18,7 +18,6 @@ const projectId = "jarvis-fbiu";
 const sessionId = "1234";
 const languageCode = "fr";
 
-
 process.env.GOOGLE_APPLICATION_CREDENTIALS = "C:/Users/loucassany-adm/Desktop/Perso/Jarvis/private/jarvis-fbiu-c9f15797e41f.json";
 
 // Define session path
@@ -39,13 +38,15 @@ async function detectIntentwithTTSResponse(text) {
                 audioEncoding: "OUTPUT_AUDIO_ENCODING_LINEAR_16",
             },
         };
-        sessionClient.detectIntent(request).then((responses) => {
+        (async () => {
+            let responses = await sessionClient.detectIntent(request); //.then((responses) => {
             //console.log(responses[0]);
             console.log(colors.cyan(responses[0].queryResult.fulfillmentText));
             const audioFile = responses[0].outputAudio;
 
             resolve(audioFile);
-        });
+        })();
+        //});
     });
 }
 
@@ -71,9 +72,9 @@ function playAudio(audioBuffer) {
 }
 
 (async () => {
-    console.log(colors.cyan("--------------------------------"))
-    console.log(colors.cyan("--------------------------------"))
-    console.log(colors.cyan("--------------------------------"))
+    console.log(colors.cyan("--------------------------------"));
+    console.log(colors.cyan("--------------------------------"));
+    console.log(colors.cyan("--------------------------------"));
     while (true) {
         prompt.start();
         const text = await prompt.get({

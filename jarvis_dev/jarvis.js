@@ -108,7 +108,7 @@ function getAudio() {
                 recording.stop();
                 resolve({});
             }
-        }, 5000);
+        }, 15000);
     });
 }
 

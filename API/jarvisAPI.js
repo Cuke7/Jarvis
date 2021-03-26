@@ -11,7 +11,7 @@ const projectId = "jarvis-fbiu";
 const sessionId = "1234";
 const languageCode = "fr";
 
-process.env.GOOGLE_APPLICATION_CREDENTIALS = "C:/Users/loucassany-adm/Desktop/Perso/Jarvis/private/jarvis-fbiu-c9f15797e41f.json";
+process.env.GOOGLE_APPLICATION_CREDENTIALS = "./jarvis-fbiu-c9f15797e41f.json";
 
 // Define session path
 const sessionPath = sessionClient.projectAgentSessionPath(projectId, sessionId);

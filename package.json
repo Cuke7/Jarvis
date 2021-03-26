@@ -4,15 +4,16 @@
     "description": "",
     "main": "index.js",
     "scripts": {
-        "dev": "nodemon --inspect app.js",
-        "start": "node app.js",
-        "tunnel": "ngrok http 8080"
+        "dev": "nodemon --inspect server.js",
+        "start": "node server.js",
+        "tunnel": "ngrok http 8000"
     },
     "author": "",
     "license": "ISC",
     "dependencies": {
         "@google-cloud/dialogflow": "^3.4.0",
         "actions-on-google": "^2.13.0",
+        "autocorrect": "^1.2.0",
         "body-parser": "^1.19.0",
         "colors": "^1.4.0",
         "dialogflow-fulfillment": "^0.6.1",
@@ -25,9 +26,11 @@
         "prompt": "^1.1.0",
         "prompts": "^2.4.0",
         "pump": "^3.0.0",
+        "puppeteer": "^8.0.0",
         "readable-stream": "^3.6.0",
         "request": "^2.88.2",
         "request-promise": "^4.2.6",
+        "request-promise-native": "^1.0.9",
         "send-seekable": "^1.0.4",
         "sox": "^0.1.0",
         "speaker": "^0.5.3",
